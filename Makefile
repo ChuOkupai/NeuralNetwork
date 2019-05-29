@@ -7,8 +7,8 @@ clean:
 nn.o: nn.c nn.h
 	$(CC) $(CFLAGS) -c $< -o $@
 
-main.out: main.c nn.o
+%.out: %.c nn.o
 	$(CC) $(CFLAGS) $^ -o $@
 
-run: main.out
+run: boolean.out
 	./$<
