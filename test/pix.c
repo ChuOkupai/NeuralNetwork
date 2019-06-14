@@ -1,5 +1,7 @@
+#include <stdlib.h>
 #include <stdio.h>
-#include "nn.h"
+#include <time.h>
+#include "perceptron.h"
 
 void	export(int *t, int n)
 {
@@ -13,9 +15,10 @@ void	export(int *t, int n)
 
 int	main()
 {
+	srand(time(NULL));
 	perceptron_t *p = perceptron_create(5);
 	// taille 5 pour stocker les 4 pixels du motif + le neurone de sortie
-	int session = 0, t[4], sample, expected, valid = 0;
+	int session = 0, t[4], sample, expected, valid = 0, i;
 	printf("Detection of sample 1001:\n");
 	while (valid < 16) // 16 motifs au total possibles
 	{
@@ -30,6 +33,13 @@ int	main()
 			printf("sample: %d%d%d%d\n", t[0], t[1], t[2], t[3]);
 			if (perceptron_learn(p, t, expected) == expected)
 				valid++;
+			else // wrong answer!
+			{
+				printf("new weights set: ");
+				for (i = 1; i < p->total; i++)
+					printf("%f ", p->weight[i]);
+				printf("%f\n", p->weight[0]);
+			}
 			sample++;
 		}
 	}

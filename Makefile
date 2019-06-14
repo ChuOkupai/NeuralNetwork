@@ -1,14 +1,29 @@
-CC=gcc
-CFLAGS=-O3 -Wall -Werror -Wextra
+LIB = libperceptron.a
+CC = gcc
+CFLAGS = -O3 -Wall -Wextra -Werror
+LDFLAGS = -I./include -L. -lperceptron
+
+all: $(test)
+
+%.o: %.c include/*.h
+	$(CC) $(CFLAGS) -c $< -o $@ -I./include
+
+$(LIB): src/perceptron.o
+	ar rcs $@ $<
+
+%.out: %.c include/*.h $(LIB)
+	$(CC) $(CFLAGS) $< -o $@ $(LDFLAGS)
+
+# call this with test-boolean or test-pix
+test-%: test/%.out
+	./$<
 
 clean:
-	rm -f *.o *.out
+	rm -f src/*.o
 
-nn.o: nn.c nn.h
-	$(CC) $(CFLAGS) -c $< -o $@
+fclean: clean
+	rm -f $(LIB) test/*.out
 
-%.out: %.c nn.o
-	$(CC) $(CFLAGS) $^ -o $@
+re: fclean all
 
-run: boolean.out
-	./$<
+.PHONY: clean fclean re
